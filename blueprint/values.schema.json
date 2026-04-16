@@ -209,7 +209,7 @@
           "properties": {
             "enabled": {
               "default": false,
-              "description": "Enable Redis caching — the key demo toggle",
+              "description": "Enable Redis caching",
               "title": "enabled",
               "type": "boolean"
             },
@@ -232,7 +232,7 @@
                 "2Gi",
                 "3Gi"
               ],
-              "title": "storage",
+              "title": "Redis storage",
               "type": "string"
             }
           },
