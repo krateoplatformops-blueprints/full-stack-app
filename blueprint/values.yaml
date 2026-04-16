@@ -82,6 +82,7 @@ app:
   # @schema
   frontend:
     # @schema
+    # title: frontendImage
     # description: Frontend container image
     # type: object
     # @schema
@@ -144,7 +145,7 @@ app:
     # @schema
     image: quay.io/opstree/redis:v7.4.8
     # @schema
-    # title: Redis storage
+    # title: redisStorage
     # description: Redis PVC storage size
     # type: string
     # enum: ["1Gi", "2Gi", "3Gi"]
@@ -178,6 +179,7 @@ app:
     # @schema
     instances: 3
     # @schema
+    # title: cnpgStorage
     # description: CNPG storage configuration
     # type: object
     # @schema

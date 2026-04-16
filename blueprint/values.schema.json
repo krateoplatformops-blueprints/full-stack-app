@@ -123,7 +123,7 @@
                   "type": "string"
                 }
               },
-              "title": "storage",
+              "title": "cnpgStorage",
               "type": "object"
             }
           },
@@ -151,7 +151,7 @@
                   "type": "string"
                 }
               },
-              "title": "image",
+              "title": "frontendImage",
               "type": "object"
             },
             "port": {
@@ -232,7 +232,7 @@
                 "2Gi",
                 "3Gi"
               ],
-              "title": "Redis storage",
+              "title": "redisStorage",
               "type": "string"
             }
           },
