@@ -222,7 +222,8 @@
                 "quay.io/opstree/redis:v8.2.5"
               ],
               "title": "image",
-              "type": "string"
+              "type": "string",
+              "x-crdgen-identifier-name": "redisImage"
             },
             "storage": {
               "default": "1Gi",
