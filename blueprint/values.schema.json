@@ -123,7 +123,7 @@
                   "type": "string"
                 }
               },
-              "title": "cnpgStorage",
+              "title": "storage",
               "type": "object"
             }
           },
@@ -151,7 +151,7 @@
                   "type": "string"
                 }
               },
-              "title": "frontendImage",
+              "title": "image",
               "type": "object"
             },
             "port": {
@@ -232,8 +232,9 @@
                 "2Gi",
                 "3Gi"
               ],
-              "title": "redisStorage",
-              "type": "string"
+              "title": "storage",
+              "type": "string",
+              "x-crdgen-identifier-name": "redisStorage"
             }
           },
           "title": "redis",
