@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.app.name }}-backend
+  namespace: {{ .Values.app.namespace }}
+  labels:
+    app: {{ .Values.app.name }}-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.app.name }}-backend
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.app.name }}-backend
+    spec:
+      initContainers:
+        - name: wait-for-db
+          image: busybox:1.36
+          command:
+            - sh
+            - -c
+            - |
+              until nc -z {{ .Values.app.cnpg.clusterName }}-rw.{{ .Values.app.namespace }}.svc.cluster.local 5432; do
+                echo "Waiting for PostgreSQL..."; sleep 2
+              done
+      containers:
+        - name: backend
+          image: "{{ .Values.app.backend.image.repository }}:{{ .Values.app.backend.image.tag }}"
+          imagePullPolicy: Always
+          ports:
+            - containerPort: {{ .Values.app.backend.port }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Values.app.name }}-backend-config
+          env:
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: "{{ .Values.app.cnpg.clusterName }}-app"
+                  key: username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: "{{ .Values.app.cnpg.clusterName }}-app"
+                  key: password
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.app.backend.healthPath }}
+              port: {{ .Values.app.backend.port }}
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.app.backend.healthPath }}
+              port: {{ .Values.app.backend.port }}
+            initialDelaySeconds: 20
+            periodSeconds: 10

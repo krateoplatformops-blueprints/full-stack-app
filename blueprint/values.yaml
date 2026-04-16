@@ -1,0 +1,237 @@
+# @schema
+# description: Application parameters section
+# type: object
+# @schema
+app:
+  # @schema
+  # description: Application name used as prefix for all Kubernetes resource names
+  # type: string
+  # default: pixel-grid
+  # @schema
+  name: pixel-grid
+  # @schema
+  # description: Kubernetes namespace where the application will be deployed
+  # type: string
+  # default: pixel-grid
+  # @schema
+  namespace: pixel-grid
+
+  # @schema
+  # description: Backend service parameters
+  # type: object
+  # @schema
+  backend:
+    # @schema
+    # description: Backend container image
+    # type: object
+    # @schema
+    image:
+      # @schema
+      # description: Backend image repository
+      # type: string
+      # default: ghcr.io/krateoplatformops-blueprints/pixel-grid-backend
+      # @schema
+      repository: ghcr.io/krateoplatformops-blueprints/pixel-grid-backend
+      # @schema
+      # description: Backend image tag
+      # type: string
+      # default: latest
+      # @schema
+      tag: latest
+    # @schema
+    # description: Backend container port
+    # type: integer
+    # default: 8080
+    # @schema
+    port: 8080
+    # @schema
+    # description: Backend health check path used for readiness and liveness probes
+    # type: string
+    # default: /api/health
+    # @schema
+    healthPath: /api/health
+    # @schema
+    # description: Backend Kubernetes service configuration
+    # type: object
+    # @schema
+    service:
+      # @schema
+      # description: Backend service type
+      # type: string
+      # enum:
+      # - NodePort
+      # - LoadBalancer
+      # - ClusterIP
+      # default: NodePort
+      # @schema
+      type: NodePort
+      # @schema
+      # description: Backend NodePort number
+      # type: integer
+      # minimum: 30000
+      # maximum: 32767
+      # default: 30086
+      # @schema
+      port: 30086
+    # @schema
+    # description: Additional environment variables injected into the backend container
+    # type: object
+    # @schema
+    env: {}
+
+  # @schema
+  # description: Frontend service parameters
+  # type: object
+  # @schema
+  frontend:
+    # @schema
+    # description: Frontend container image
+    # type: object
+    # @schema
+    image:
+      # @schema
+      # description: Frontend image repository
+      # type: string
+      # default: ghcr.io/krateoplatformops-blueprints/pixel-grid-frontend
+      # @schema
+      repository: ghcr.io/krateoplatformops-blueprints/pixel-grid-frontend
+      # @schema
+      # description: Frontend image tag
+      # type: string
+      # default: latest
+      # @schema
+      tag: latest
+    # @schema
+    # description: Frontend container port
+    # type: integer
+    # default: 8080
+    # @schema
+    port: 8080
+    # @schema
+    # description: Frontend Kubernetes service configuration
+    # type: object
+    # @schema
+    service:
+      # @schema
+      # description: Frontend service type
+      # type: string
+      # enum:
+      # - NodePort
+      # - LoadBalancer
+      # - ClusterIP
+      # default: NodePort
+      # @schema
+      type: NodePort
+      # @schema
+      # description: Frontend NodePort number
+      # type: integer
+      # minimum: 30000
+      # maximum: 32767
+      # default: 30088
+      # @schema
+      port: 30088
+
+  # @schema
+  # description: Redis cache configuration (OT-CONTAINER-KIT operator)
+  # type: object
+  # @schema
+  redis:
+    # @schema
+    # description: Enable Redis caching — the key demo toggle
+    # type: boolean
+    # default: false
+    # @schema
+    enabled: false
+    # @schema
+    # description: Redis container image
+    # type: string
+    # enum:
+    # - quay.io/opstree/redis:v7.4.8
+    # - quay.io/opstree/redis:v8.0.6
+    # - quay.io/opstree/redis:v8.2.5
+    # default: quay.io/opstree/redis:v7.4.8
+    # @schema
+    image: quay.io/opstree/redis:v7.4.8
+    # @schema
+    # description: Redis PVC storage size
+    # type: string
+    # enum:
+    # - 1Gi
+    # - 2Gi
+    # - 3Gi
+    # default: 1Gi
+    # @schema
+    storage: 1Gi
+
+  # @schema
+  # description: CloudNativePG cluster configuration
+  # type: object
+  # @schema
+  cnpg:
+    # @schema
+    # description: CNPG Cluster resource name; CNPG derives the read-write service as <clusterName>-rw and the app secret as <clusterName>-app
+    # type: string
+    # default: pg-cluster
+    # @schema
+    clusterName: pg-cluster
+    # @schema
+    # description: PostgreSQL major version — selects the official ghcr.io/cloudnative-pg/postgresql image tag
+    # type: string
+    # enum:
+    # - "16"
+    # - "17"
+    # - "18"
+    # default: "18"
+    # @schema
+    postgresVersion: "18"
+    # @schema
+    # description: Number of PostgreSQL instances in the CNPG cluster
+    # type: integer
+    # minimum: 1
+    # default: 3
+    # @schema
+    instances: 3
+    # @schema
+    # description: CNPG storage configuration
+    # type: object
+    # @schema
+    storage:
+      # @schema
+      # description: CNPG PVC storage size
+      # type: string
+      # enum:
+      # - 1Gi
+      # - 3Gi
+      # - 5Gi
+      # default: 1Gi
+      # @schema
+      size: 1Gi
+
+# @schema
+# description: Testing configuration
+# type: object
+# @schema
+testing:
+  # @schema
+  # description: Load testing configuration (Vegeta CronJob running inside the cluster)
+  # type: object
+  # @schema
+  loadTesting:
+    # @schema
+    # description: Enable the load-test CronJob
+    # type: boolean
+    # default: true
+    # @schema
+    enabled: true
+    # @schema
+    # description: Cron schedule for the load-test job
+    # type: string
+    # default: "*/5 * * * *"
+    # @schema
+    schedule: "*/5 * * * *"
+    # @schema
+    # description: Load test container image (contains Vegeta + entrypoint.sh)
+    # type: string
+    # default: ghcr.io/krateoplatformops-blueprints/pixel-grid-load-test:latest
+    # @schema
+    scriptImage: ghcr.io/krateoplatformops-blueprints/pixel-grid-load-test:latest

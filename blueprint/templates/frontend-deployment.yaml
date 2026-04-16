@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.app.name }}-frontend
+  namespace: {{ .Values.app.namespace }}
+  labels:
+    app: {{ .Values.app.name }}-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.app.name }}-frontend
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.app.name }}-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: "{{ .Values.app.frontend.image.repository }}:{{ .Values.app.frontend.image.tag }}"
+          imagePullPolicy: Always
+          env:
+            - name: BACKEND_HOST
+              value: "{{ .Values.app.name }}-backend"
+            - name: BACKEND_PORT
+              value: {{ .Values.app.backend.port | quote }}
+          ports:
+            - containerPort: {{ .Values.app.frontend.port }}
+          readinessProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.app.frontend.port }}
+            initialDelaySeconds: 5
+            periodSeconds: 5

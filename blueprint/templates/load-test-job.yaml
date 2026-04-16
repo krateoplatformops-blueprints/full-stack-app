@@ -1,0 +1,26 @@
+{{- if .Values.testing.loadTesting.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ .Values.app.name }}-load-test-backend
+  namespace: {{ .Values.app.namespace }}
+spec:
+  schedule: {{ .Values.testing.loadTesting.schedule | quote }}
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 300
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: load-test-backend
+              image: {{ .Values.testing.loadTesting.scriptImage }}
+              env:
+                - name: BACKEND_HOST
+                  value: "{{ .Values.app.name }}-backend"
+                - name: BACKEND_PORT
+                  value: {{ .Values.app.backend.port | quote }}
+{{- end }}

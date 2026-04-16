@@ -1,0 +1,282 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "additionalProperties": false,
+  "properties": {
+    "app": {
+      "additionalProperties": false,
+      "description": "Application parameters section",
+      "properties": {
+        "backend": {
+          "additionalProperties": false,
+          "description": "Backend service parameters",
+          "properties": {
+            "env": {
+              "additionalProperties": false,
+              "description": "Additional environment variables injected into the backend container",
+              "title": "env",
+              "type": "object"
+            },
+            "healthPath": {
+              "default": "/api/health",
+              "description": "Backend health check path used for readiness and liveness probes",
+              "title": "healthPath",
+              "type": "string"
+            },
+            "image": {
+              "additionalProperties": false,
+              "description": "Backend container image",
+              "properties": {
+                "repository": {
+                  "default": "ghcr.io/krateoplatformops-blueprints/pixel-grid-backend",
+                  "description": "Backend image repository",
+                  "title": "repository",
+                  "type": "string"
+                },
+                "tag": {
+                  "default": "latest",
+                  "description": "Backend image tag",
+                  "title": "tag",
+                  "type": "string"
+                }
+              },
+              "title": "image",
+              "type": "object"
+            },
+            "port": {
+              "default": 8080,
+              "description": "Backend container port",
+              "title": "port",
+              "type": "integer"
+            },
+            "service": {
+              "additionalProperties": false,
+              "description": "Backend Kubernetes service configuration",
+              "properties": {
+                "port": {
+                  "default": 30086,
+                  "description": "Backend NodePort number",
+                  "maximum": 32767,
+                  "minimum": 30000,
+                  "title": "port",
+                  "type": "integer"
+                },
+                "type": {
+                  "default": "NodePort",
+                  "description": "Backend service type",
+                  "enum": [
+                    "NodePort",
+                    "LoadBalancer",
+                    "ClusterIP"
+                  ],
+                  "title": "type",
+                  "type": "string"
+                }
+              },
+              "title": "service",
+              "type": "object"
+            }
+          },
+          "title": "backend",
+          "type": "object"
+        },
+        "cnpg": {
+          "additionalProperties": false,
+          "description": "CloudNativePG cluster configuration",
+          "properties": {
+            "clusterName": {
+              "default": "pg-cluster",
+              "description": "CNPG Cluster resource name; CNPG derives the read-write service as \u003cclusterName\u003e-rw and the app secret as \u003cclusterName\u003e-app",
+              "title": "clusterName",
+              "type": "string"
+            },
+            "instances": {
+              "default": 3,
+              "description": "Number of PostgreSQL instances in the CNPG cluster",
+              "minimum": 1,
+              "title": "instances",
+              "type": "integer"
+            },
+            "postgresVersion": {
+              "default": "18",
+              "description": "PostgreSQL major version — selects the official ghcr.io/cloudnative-pg/postgresql image tag",
+              "enum": [
+                "16",
+                "17",
+                "18"
+              ],
+              "title": "postgresVersion",
+              "type": "string"
+            },
+            "storage": {
+              "additionalProperties": false,
+              "description": "CNPG storage configuration",
+              "properties": {
+                "size": {
+                  "default": "1Gi",
+                  "description": "CNPG PVC storage size",
+                  "enum": [
+                    "1Gi",
+                    "3Gi",
+                    "5Gi"
+                  ],
+                  "title": "size",
+                  "type": "string"
+                }
+              },
+              "title": "storage",
+              "type": "object"
+            }
+          },
+          "title": "cnpg",
+          "type": "object"
+        },
+        "frontend": {
+          "additionalProperties": false,
+          "description": "Frontend service parameters",
+          "properties": {
+            "image": {
+              "additionalProperties": false,
+              "description": "Frontend container image",
+              "properties": {
+                "repository": {
+                  "default": "ghcr.io/krateoplatformops-blueprints/pixel-grid-frontend",
+                  "description": "Frontend image repository",
+                  "title": "repository",
+                  "type": "string"
+                },
+                "tag": {
+                  "default": "latest",
+                  "description": "Frontend image tag",
+                  "title": "tag",
+                  "type": "string"
+                }
+              },
+              "title": "image",
+              "type": "object"
+            },
+            "port": {
+              "default": 8080,
+              "description": "Frontend container port",
+              "title": "port",
+              "type": "integer"
+            },
+            "service": {
+              "additionalProperties": false,
+              "description": "Frontend Kubernetes service configuration",
+              "properties": {
+                "port": {
+                  "default": 30088,
+                  "description": "Frontend NodePort number",
+                  "maximum": 32767,
+                  "minimum": 30000,
+                  "title": "port",
+                  "type": "integer"
+                },
+                "type": {
+                  "default": "NodePort",
+                  "description": "Frontend service type",
+                  "enum": [
+                    "NodePort",
+                    "LoadBalancer",
+                    "ClusterIP"
+                  ],
+                  "title": "type",
+                  "type": "string"
+                }
+              },
+              "title": "service",
+              "type": "object"
+            }
+          },
+          "title": "frontend",
+          "type": "object"
+        },
+        "name": {
+          "default": "pixel-grid",
+          "description": "Application name used as prefix for all Kubernetes resource names",
+          "title": "name",
+          "type": "string"
+        },
+        "namespace": {
+          "default": "pixel-grid",
+          "description": "Kubernetes namespace where the application will be deployed",
+          "title": "namespace",
+          "type": "string"
+        },
+        "redis": {
+          "additionalProperties": false,
+          "description": "Redis cache configuration (OT-CONTAINER-KIT operator)",
+          "properties": {
+            "enabled": {
+              "default": false,
+              "description": "Enable Redis caching — the key demo toggle",
+              "title": "enabled",
+              "type": "boolean"
+            },
+            "image": {
+              "default": "quay.io/opstree/redis:v7.4.8",
+              "description": "Redis container image",
+              "enum": [
+                "quay.io/opstree/redis:v7.4.8",
+                "quay.io/opstree/redis:v8.0.6",
+                "quay.io/opstree/redis:v8.2.5"
+              ],
+              "title": "image",
+              "type": "string"
+            },
+            "storage": {
+              "default": "1Gi",
+              "description": "Redis PVC storage size",
+              "enum": [
+                "1Gi",
+                "2Gi",
+                "3Gi"
+              ],
+              "title": "storage",
+              "type": "string"
+            }
+          },
+          "title": "redis",
+          "type": "object"
+        }
+      },
+      "title": "app",
+      "type": "object"
+    },
+    "testing": {
+      "additionalProperties": false,
+      "description": "Testing configuration",
+      "properties": {
+        "loadTesting": {
+          "additionalProperties": false,
+          "description": "Load testing configuration (Vegeta CronJob running inside the cluster)",
+          "properties": {
+            "enabled": {
+              "default": true,
+              "description": "Enable the load-test CronJob",
+              "title": "enabled",
+              "type": "boolean"
+            },
+            "schedule": {
+              "default": "*/5 * * * *",
+              "description": "Cron schedule for the load-test job",
+              "title": "schedule",
+              "type": "string"
+            },
+            "scriptImage": {
+              "default": "ghcr.io/krateoplatformops-blueprints/pixel-grid-load-test:latest",
+              "description": "Load test container image (contains Vegeta + entrypoint.sh)",
+              "title": "scriptImage",
+              "type": "string"
+            }
+          },
+          "title": "loadTesting",
+          "type": "object"
+        }
+      },
+      "title": "testing",
+      "type": "object"
+    }
+  },
+  "type": "object"
+}
