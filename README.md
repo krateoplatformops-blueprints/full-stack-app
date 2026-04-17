@@ -120,14 +120,14 @@ spec:
         tag: latest
       service:
         type: NodePort
-        port: 30086
+        port: 30098
     frontend:
       image:
         repository: ghcr.io/my-org/my-frontend
         tag: latest
       service:
         type: NodePort
-        port: 30088
+        port: 30099
     redis:
       enabled: false
       image: quay.io/opstree/redis:v7.4.8
