@@ -9,7 +9,7 @@ spec:
     image: {{ .Values.app.redis.image }}
     imagePullPolicy: IfNotPresent
   redisConfig:
-    additionalRedisConfig: "loglevel verbose"
+    additionalRedisConfig: {{ .Release.Name }}-redis-config
   storage:
     volumeClaimTemplate:
       spec:
