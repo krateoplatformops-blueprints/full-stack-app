@@ -191,18 +191,6 @@
           "title": "frontend",
           "type": "object"
         },
-        "name": {
-          "default": "pixel-grid",
-          "description": "Application name used as prefix for all Kubernetes resource names",
-          "title": "name",
-          "type": "string"
-        },
-        "namespace": {
-          "default": "pixel-grid",
-          "description": "Kubernetes namespace where the application will be deployed",
-          "title": "namespace",
-          "type": "string"
-        },
         "redis": {
           "additionalProperties": false,
           "description": "Redis cache configuration (OT-CONTAINER-KIT operator)",
@@ -222,8 +210,7 @@
                 "quay.io/opstree/redis:v8.2.5"
               ],
               "title": "image",
-              "type": "string",
-              "x-crdgen-identifier-name": "redisImage"
+              "type": "string"
             },
             "storage": {
               "default": "1Gi",
@@ -234,8 +221,7 @@
                 "3Gi"
               ],
               "title": "storage",
-              "type": "string",
-              "x-crdgen-identifier-name": "redisStorage"
+              "type": "string"
             }
           },
           "title": "redis",

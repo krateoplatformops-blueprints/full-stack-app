@@ -8,6 +8,8 @@ spec:
   kubernetesConfig:
     image: {{ .Values.app.redis.image }}
     imagePullPolicy: IfNotPresent
+  redisConfig:
+    additionalRedisConfig: "loglevel verbose"
   storage:
     volumeClaimTemplate:
       spec:

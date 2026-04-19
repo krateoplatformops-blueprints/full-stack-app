@@ -4,19 +4,6 @@
 # @schema
 app:
   # @schema
-  # description: Application name used as prefix for all Kubernetes resource names
-  # type: string
-  # default: pixel-grid
-  # @schema
-  name: pixel-grid
-  # @schema
-  # description: Kubernetes namespace where the application will be deployed
-  # type: string
-  # default: pixel-grid
-  # @schema
-  namespace: pixel-grid
-
-  # @schema
   # description: Backend service parameters
   # type: object
   # @schema

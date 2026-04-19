@@ -2,7 +2,6 @@
 
 A Krateo blueprint that provisions a complete full-stack application environment on Kubernetes:
 
-- **Namespace** — isolated per deployment
 - **PostgreSQL** — via [CloudNativePG](https://cloudnative-pg.io/) (CNPG) operator
 - **Redis** (optional) — via [OT-CONTAINER-KIT](https://github.com/OT-CONTAINER-KIT/redis-operator) operator; toggled with `app.redis.enabled`
 - **Backend** — any containerised HTTP service; connects to the database and optionally to Redis
@@ -15,7 +14,7 @@ A Krateo blueprint that provisions a complete full-stack application environment
 
 Install both operators in the cluster **once**, before applying the blueprint.
 
-**CNPG Operator**
+**CNPG Operator (already shipped with Krateo)**
 ```bash
 helm repo add cnpg https://cloudnative-pg.github.io/charts
 helm upgrade --install cnpg cnpg/cloudnative-pg \
@@ -112,19 +111,11 @@ metadata:
   namespace: <release-namespace>
 spec:
   app:
-    name: <release-name>
-    namespace: <release-namespace>
     backend:
-      image:
-        repository: ghcr.io/my-org/my-backend
-        tag: latest
       service:
         type: NodePort
         port: 30098
     frontend:
-      image:
-        repository: ghcr.io/my-org/my-frontend
-        tag: latest
       service:
         type: NodePort
         port: 30099
@@ -140,9 +131,7 @@ spec:
         size: 1Gi
   testing:
     loadTesting:
-      enabled: true
-      schedule: "*/5 * * * *"
-      scriptImage: ghcr.io/my-org/my-load-test:latest
+      enabled: false
 EOF
 ```
 
