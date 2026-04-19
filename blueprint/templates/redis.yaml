@@ -2,8 +2,8 @@
 apiVersion: redis.redis.opstreelabs.in/v1beta2
 kind: Redis
 metadata:
-  name: {{ .Values.app.name }}-redis
-  namespace: {{ .Values.app.namespace }}
+  name: {{ .Release.Name }}-redis
+  namespace: {{ .Release.Namespace }}
 spec:
   kubernetesConfig:
     image: {{ .Values.app.redis.image }}

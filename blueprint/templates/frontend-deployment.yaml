@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.app.name }}-frontend
-  namespace: {{ .Values.app.namespace }}
+  name: {{ .Release.Name }}-frontend
+  namespace: {{ .Release.Namespace }}
   labels:
-    app: {{ .Values.app.name }}-frontend
+    app: {{ .Release.Name }}-frontend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: {{ .Values.app.name }}-frontend
+      app: {{ .Release.Name }}-frontend
   template:
     metadata:
       labels:
-        app: {{ .Values.app.name }}-frontend
+        app: {{ .Release.Name }}-frontend
     spec:
       containers:
         - name: frontend
@@ -21,7 +21,7 @@ spec:
           imagePullPolicy: Always
           env:
             - name: BACKEND_HOST
-              value: "{{ .Values.app.name }}-backend"
+              value: "{{ .Release.Name }}-backend"
             - name: BACKEND_PORT
               value: {{ .Values.app.backend.port | quote }}
           ports:

@@ -1,15 +1,15 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Values.app.name }}-backend-config
-  namespace: {{ .Values.app.namespace }}
+  name: {{ .Release.Name }}-backend-config
+  namespace: {{ .Release.Namespace }}
 data:
   REDIS_ENABLED: {{ .Values.app.redis.enabled | quote }}
-  REDIS_HOST: "{{ .Values.app.name }}-redis.{{ .Values.app.namespace }}.svc.cluster.local"
+  REDIS_HOST: "{{ .Release.Name }}-redis.{{ .Release.Namespace }}.svc.cluster.local"
   REDIS_PORT: "6379"
-  DB_HOST: "{{ .Values.app.cnpg.clusterName }}-rw.{{ .Values.app.namespace }}.svc.cluster.local"
+  DB_HOST: "{{ .Values.app.cnpg.clusterName }}-rw.{{ .Release.Namespace }}.svc.cluster.local"
   DB_PORT: "5432"
-  DB_NAME: {{ .Values.app.name | quote }}
+  DB_NAME: {{ .Release.Name | quote }}
   {{- range $key, $val := .Values.app.backend.env }}
   {{ $key }}: {{ $val | quote }}
   {{- end }}

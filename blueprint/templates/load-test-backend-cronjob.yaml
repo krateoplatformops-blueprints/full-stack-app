@@ -2,8 +2,8 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: {{ .Values.app.name }}-load-test-backend
-  namespace: {{ .Values.app.namespace }}
+  name: {{ .Release.Name }}-load-test-backend
+  namespace: {{ .Release.Namespace }}
 spec:
   schedule: {{ .Values.testing.loadTesting.schedule | quote }}
   concurrencyPolicy: Forbid
@@ -20,7 +20,7 @@ spec:
               image: {{ .Values.testing.loadTesting.scriptImage }}
               env:
                 - name: BACKEND_HOST
-                  value: "{{ .Values.app.name }}-backend"
+                  value: "{{ .Release.Name }}-backend"
                 - name: BACKEND_PORT
                   value: {{ .Values.app.backend.port | quote }}
 {{- end }}
