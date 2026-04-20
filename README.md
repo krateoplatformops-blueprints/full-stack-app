@@ -6,23 +6,14 @@ A Krateo blueprint that provisions a complete full-stack application environment
 - **Redis** (optional) — via [OT-CONTAINER-KIT](https://github.com/OT-CONTAINER-KIT/redis-operator) operator; toggled with `app.redis.enabled`
 - **Backend** — any containerised HTTP service; connects to the database and optionally to Redis
 - **Frontend** — any containerised web server; proxies API requests to the backend
-- **Load test** (optional) — periodic CronJob running [Vegeta](https://github.com/tsenart/vegeta) inside the cluster
 
 ---
 
 ## Prerequisites
 
-Install both operators in the cluster **once**, before applying the blueprint.
+- **CNPG Operator** is already deployed with a standard Krateo installation.
 
-**CNPG Operator (already shipped with Krateo)**
-```bash
-helm repo add cnpg https://cloudnative-pg.github.io/charts
-helm upgrade --install cnpg cnpg/cloudnative-pg \
-  --namespace cnpg-system --create-namespace \
-  --version 0.27.1
-```
-
-**Redis Operator (OT-CONTAINER-KIT)**
+- **Redis Operator (OT-CONTAINER-KIT)**:
 ```bash
 helm repo add ot-helm https://ot-container-kit.github.io/helm-charts
 helm upgrade --install redis-operator ot-helm/redis-operator \
@@ -33,22 +24,52 @@ helm upgrade --install redis-operator ot-helm/redis-operator \
 
 ## Architecture
 
-```
-Browser
-  │
-  ├─ GET /         → Frontend (nginx, port 8080)
-  │                       │
-  └─ /api/*  ─────────────┤  proxy /api/ → Backend (port 8080)
-                                                │            │
-                                          PostgreSQL       Redis
-                                          (CNPG, RW svc)  (optional)
+```mermaid
+flowchart TD
+    Browser["🌐 Browser"]
+
+    subgraph k8s["Kubernetes"]
+        Frontend["Frontend"]
+        Backend["Backend"]
+
+        subgraph cnpg["CloudNativePG Cluster (HA · 3 instances)"]
+            PG_RW["PostgreSQL Primary\n&lt;clusterName&gt;-rw:5432"]
+            PG_RO["PostgreSQL Replicas x2\n&lt;clusterName&gt;-ro:5432"]
+            PG_RW -- replication --> PG_RO
+        end
+
+        Redis["Redis Cache\n&lt;release&gt;-redis:6379\n⚠️ no password - optional"]
+    end
+
+    Browser --> Frontend
+    Frontend -- "proxy /api/*" --> Backend
+    Backend --> cnpg
+    Backend -- "if REDIS_ENABLED=true" --> Redis
 ```
 
-CNPG automatically creates:
-- a read-write service at `<clusterName>-rw.<namespace>.svc.cluster.local`
-- a secret `<clusterName>-app` with keys `username` and `password`
+### Authentication & connectivity details
 
-The backend receives DB credentials from that secret and connection details from a ConfigMap.
+**PostgreSQL (CNPG)**
+
+CNPG bootstraps the cluster with a dedicated database and owner matching `metadata.name` (the Helm release name), then **automatically generates** a Kubernetes Secret named `<clusterName>-app`. Credentials are injected in the backend as environment variables from that secret:
+
+| Env var | Source |
+|---|---|
+| `DB_HOST` | ConfigMap → `<clusterName>-rw.<namespace>.svc.cluster.local` |
+| `DB_PORT` | ConfigMap → `5432` |
+| `DB_NAME` | ConfigMap → Helm release name |
+| `DB_USER` | Secret `<clusterName>-app` → key `username` |
+| `DB_PASSWORD` | Secret `<clusterName>-app` → key `password` |
+
+**Redis**
+
+Redis is deployed via the OT-CONTAINER-KIT operator **without any password or TLS**. The instance is only reachable inside the cluster. The backend connects only when `REDIS_ENABLED=true` is set in the backend ConfigMap, which is rendered from Helm values. This allows the blueprint to support Redis as an optional component. 
+
+| Env var | Value |
+|---|---|
+| `REDIS_ENABLED` | `"true"` / `"false"` (default `"false"`) |
+| `REDIS_HOST` | `<release>-redis.<namespace>.svc.cluster.local` |
+| `REDIS_PORT` | `6379` |
 
 ---
 
@@ -56,8 +77,6 @@ The backend receives DB credentials from that secret and connection details from
 
 | Value | Default | Description |
 |---|---|---|
-| `app.name` | — | Name prefix for all Kubernetes resources |
-| `app.namespace` | — | Target namespace |
 | `app.backend.image.repository` | — | Backend container image repository |
 | `app.backend.image.tag` | `latest` | Backend container image tag |
 | `app.backend.service.type` | `NodePort` | Backend service type |
@@ -66,14 +85,14 @@ The backend receives DB credentials from that secret and connection details from
 | `app.frontend.image.tag` | `latest` | Frontend container image tag |
 | `app.frontend.service.type` | `NodePort` | Frontend service type |
 | `app.frontend.service.port` | `30088` | Frontend NodePort |
-| `app.redis.enabled` | `false` | Enable Redis sidecar cache |
-| `app.redis.image` | `quay.io/opstree/redis:v7.4.8` | Redis image (enum) |
+| `app.redis.enabled` | `false` | Enable Redis cache |
+| `app.redis.image` | `quay.io/opstree/redis:v7.4.8` | Redis image (enum: v7.4.8 / v8.0.6 / v8.2.5) |
 | `app.redis.storage` | `1Gi` | Redis PVC size (enum: 1Gi / 2Gi / 3Gi) |
 | `app.cnpg.clusterName` | `pg-cluster` | CNPG Cluster resource name |
 | `app.cnpg.postgresVersion` | `18` | PostgreSQL major version (enum: 16 / 17 / 18) |
 | `app.cnpg.instances` | `3` | Number of CNPG replicas |
 | `app.cnpg.storage.size` | `1Gi` | CNPG PVC size per instance (enum: 1Gi / 3Gi / 5Gi) |
-| `testing.loadTesting.enabled` | `true` | Deploy the load-test CronJob |
+| `testing.loadTesting.enabled` | `true` | Deploy a load-test CronJob |
 | `testing.loadTesting.schedule` | `*/5 * * * *` | CronJob schedule |
 | `testing.loadTesting.scriptImage` | — | Load-test container image |
 
@@ -91,24 +110,24 @@ apiVersion: core.krateo.io/v1alpha1
 kind: CompositionDefinition
 metadata:
   name: full-stack-app
-  namespace: krateo-system
+  namespace: demo-system
 spec:
   chart:
     repo: full-stack-app
     url: https://marketplace.krateo.io
-    version: <version>
+    version: 0.0.15
 EOF
 ```
 
-Then install the blueprint by creating a `FullStackApp` resource. Use `metadata.name` as the Helm release name and `metadata.namespace` as the target namespace:
+Then install an instance of the blueprint by creating a `FullStackApp` resource. Use `metadata.name` as the Helm release name and `metadata.namespace` as the target namespace:
 
 ```sh
 cat <<EOF | kubectl apply -f -
-apiVersion: composition.krateo.io/v<version-with-dashes>
+apiVersion: composition.krateo.io/v0-0-15
 kind: FullStackApp
 metadata:
-  name: <release-name>
-  namespace: <release-namespace>
+  name: fsa-1
+  namespace: demo-system
 spec:
   app:
     backend:
@@ -134,10 +153,3 @@ spec:
       enabled: false
 EOF
 ```
-
----
-
-## Source code
-
-Application source, Dockerfiles, and CI workflows live in a separate repository.
-Images are built independently and referenced here by tag — the blueprint has no knowledge of how they are built.
