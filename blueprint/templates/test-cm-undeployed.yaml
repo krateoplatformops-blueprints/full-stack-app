@@ -1,0 +1,10 @@
+{{- if .Values.app.redis.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-test-cm
+  namespace: {{ .Release.Namespace }}
+data:
+  TEST1: "value1"
+  TEST2: "value2"
+{{- end }}
