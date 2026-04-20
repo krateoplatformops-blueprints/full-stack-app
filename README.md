@@ -18,6 +18,11 @@ A Krateo blueprint that provisions a complete full-stack application environment
 helm repo add ot-helm https://ot-container-kit.github.io/helm-charts
 helm upgrade --install redis-operator ot-helm/redis-operator \
   --namespace ot-operators --create-namespace
+
+kubectl wait deployment/redis-operator \
+  --namespace ot-operators \
+  --for=condition=Available \
+  --timeout=120s
 ```
 
 ---
@@ -102,7 +107,7 @@ Full schema: [`blueprint/values.schema.json`](blueprint/values.schema.json)
 
 ## Install using Krateo Composable Operation
 
-Install the `CompositionDefinition` to register the blueprint:
+**1. Register the blueprint** by creating a `CompositionDefinition`:
 
 ```sh
 cat <<EOF | kubectl apply -f -
@@ -119,7 +124,16 @@ spec:
 EOF
 ```
 
-Then install an instance of the blueprint by creating a `FullStackApp` resource. Use `metadata.name` as the Helm release name and `metadata.namespace` as the target namespace:
+Wait for it to be ready:
+
+```bash
+kubectl wait compositiondefinition/full-stack-app \
+  --namespace demo-system \
+  --for=condition=Ready \
+  --timeout=120s
+```
+
+**2. Deploy an instance** by creating a `FullStackApp` resource. Use `metadata.name` as the Helm release name and `metadata.namespace` as the target namespace:
 
 ```sh
 cat <<EOF | kubectl apply -f -
@@ -152,4 +166,13 @@ spec:
     loadTesting:
       enabled: false
 EOF
+```
+
+Wait for the composition to be ready:
+
+```bash
+kubectl wait fullstackapp/fsa-1 \
+  --namespace demo-system \
+  --for=condition=Ready \
+  --timeout=300s
 ```
