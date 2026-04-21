@@ -84,16 +84,15 @@ Redis is deployed via the OT-CONTAINER-KIT operator **without any password or TL
 |---|---|---|
 | `app.backend.image.repository` | — | Backend container image repository |
 | `app.backend.image.tag` | `latest` | Backend container image tag |
-| `app.backend.service.type` | `NodePort` | Backend service type |
-| `app.backend.service.port` | `30086` | Backend NodePort |
+| `app.backend.service.type` | `ClusterIP` | Backend service type |
+| `app.backend.service.port` | `30085` | Backend NodePort (if service.type is NodePort) |
 | `app.frontend.image.repository` | — | Frontend container image repository |
 | `app.frontend.image.tag` | `latest` | Frontend container image tag |
-| `app.frontend.service.type` | `NodePort` | Frontend service type |
-| `app.frontend.service.port` | `30088` | Frontend NodePort |
+| `app.frontend.service.type` | `ClusterIP` | Frontend service type |
+| `app.frontend.service.port` | `30086` | Frontend NodePort (if service.type is NodePort) |
 | `app.redis.enabled` | `false` | Enable Redis cache |
 | `app.redis.image` | `quay.io/opstree/redis:v7.4.8` | Redis image (enum: v7.4.8 / v8.0.6 / v8.2.5) |
 | `app.redis.storage` | `1Gi` | Redis PVC size (enum: 1Gi / 2Gi / 3Gi) |
-| `app.cnpg.clusterName` | `pg-cluster` | CNPG Cluster resource name |
 | `app.cnpg.postgresVersion` | `18` | PostgreSQL major version (enum: 16 / 17 / 18) |
 | `app.cnpg.instances` | `3` | Number of CNPG replicas |
 | `app.cnpg.storage.size` | `1Gi` | CNPG PVC size per instance (enum: 1Gi / 3Gi / 5Gi) |
