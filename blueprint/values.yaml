@@ -54,9 +54,9 @@ app:
       # type: integer
       # minimum: 30000
       # maximum: 32767
-      # default: 30086
+      # default: 30085
       # @schema
-      port: 30086
+      port: 30085
     # @schema
     # description: Additional environment variables injected into the backend container
     # type: object
@@ -108,9 +108,9 @@ app:
       # type: integer
       # minimum: 30000
       # maximum: 32767
-      # default: 30088
+      # default: 30086
       # @schema
-      port: 30088
+      port: 30086
 
   # @schema
   # description: Redis cache configuration (OT-CONTAINER-KIT operator)

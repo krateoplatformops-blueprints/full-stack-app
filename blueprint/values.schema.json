@@ -53,7 +53,7 @@
               "description": "Backend Kubernetes service configuration",
               "properties": {
                 "port": {
-                  "default": 30086,
+                  "default": 30085,
                   "description": "Backend NodePort number",
                   "maximum": 32767,
                   "minimum": 30000,
@@ -159,7 +159,7 @@
               "description": "Frontend Kubernetes service configuration",
               "properties": {
                 "port": {
-                  "default": 30088,
+                  "default": 30086,
                   "description": "Frontend NodePort number",
                   "maximum": 32767,
                   "minimum": 30000,
