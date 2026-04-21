@@ -146,12 +146,11 @@ spec:
   app:
     backend:
       service:
-        type: NodePort
-        port: 30098
+        type: ClusterIP
     frontend:
       service:
         type: NodePort
-        port: 30099
+        port: 30088
     redis:
       enabled: false
       image: quay.io/opstree/redis:v7.4.8

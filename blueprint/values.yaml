@@ -46,9 +46,9 @@ app:
       # description: Backend service type
       # type: string
       # enum: ["NodePort", "LoadBalancer", "ClusterIP"]
-      # default: NodePort
+      # default: ClusterIP
       # @schema
-      type: NodePort
+      type: ClusterIP
       # @schema
       # description: Backend NodePort number
       # type: integer
@@ -100,9 +100,9 @@ app:
       # description: Frontend service type
       # type: string
       # enum: ["NodePort", "LoadBalancer", "ClusterIP"]
-      # default: NodePort
+      # default: ClusterIP
       # @schema
-      type: NodePort
+      type: ClusterIP
       # @schema
       # description: Frontend NodePort number
       # type: integer

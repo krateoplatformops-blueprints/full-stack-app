@@ -61,7 +61,7 @@
                   "type": "integer"
                 },
                 "type": {
-                  "default": "NodePort",
+                  "default": "ClusterIP",
                   "description": "Backend service type",
                   "enum": [
                     "NodePort",
@@ -173,7 +173,7 @@
                   "type": "integer"
                 },
                 "type": {
-                  "default": "NodePort",
+                  "default": "ClusterIP",
                   "description": "Frontend service type",
                   "enum": [
                     "NodePort",
