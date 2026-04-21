@@ -145,18 +145,23 @@ metadata:
 spec:
   app:
     backend:
+      image:
+        repository: ghcr.io/krateoplatformops-blueprints/pixel-grid-backend
+        tag: latest
       service:
         type: ClusterIP
     frontend:
+      image:
+        repository: ghcr.io/krateoplatformops-blueprints/pixel-grid-frontend
+        tag: latest
       service:
         type: NodePort
-        port: 30088
+        port: 30086
     redis:
       enabled: false
       image: quay.io/opstree/redis:v7.4.8
       storage: 1Gi
     cnpg:
-      clusterName: pg-cluster
       postgresVersion: "18"
       instances: 3
       storage:
