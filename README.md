@@ -120,7 +120,7 @@ spec:
   chart:
     repo: full-stack-app
     url: https://marketplace.krateo.io
-    version: 0.0.15
+    version: 0.0.16
 EOF
 ```
 
@@ -137,7 +137,7 @@ kubectl wait compositiondefinition/full-stack-app \
 
 ```sh
 cat <<EOF | kubectl apply -f -
-apiVersion: composition.krateo.io/v0-0-15
+apiVersion: composition.krateo.io/v0-0-16
 kind: FullStackApp
 metadata:
   name: fsa-1
