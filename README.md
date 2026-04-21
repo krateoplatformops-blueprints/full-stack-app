@@ -80,15 +80,16 @@ flowchart TD
 
 **PostgreSQL (CNPG)**
 
-The Helm chart renders the `Cluster` manifest with `metadata.name`, `bootstrap.initdb.database`, and `bootstrap.initdb.owner` all set to `{{ .Release.Name }}` (the Helm release name). CNPG then **automatically generates** a Kubernetes Secret named `{{ .Release.Name }}-app` containing the credentials for that database owner. Those credentials are injected into the backend as environment variables:
+The Helm chart contains a CNPG `Cluster` resource that provisions a PostgreSQL cluster with 1 primary and 2 replicas. The cluster is exposed internally via two Services: `{{ .Release.Name }}-pg-cluster-rw` for read-write operations (pointing to the primary) and `{{ .Release.Name }}-pg-cluster-ro` for read-only operations (pointing to the replicas).
+CNPG then **automatically generates** a Kubernetes Secret named `{{ .Release.Name }}-pg-cluster-app` containing the credentials for that database owner. Those credentials are injected into the backend as environment variables:
 
 | Env var | Source |
 |---|---|
-| `DB_HOST` | ConfigMap → `{{ .Release.Name }}-rw.{{ .Release.Namespace }}.svc.cluster.local` |
+| `DB_HOST` | ConfigMap → `{{ .Release.Name }}-pg-cluster-rw.{{ .Release.Namespace }}.svc.cluster.local` |
 | `DB_PORT` | ConfigMap → `5432` |
 | `DB_NAME` | ConfigMap → Helm release name |
-| `DB_USER` | Secret `{{ .Release.Name }}-app` → key `username` |
-| `DB_PASSWORD` | Secret `{{ .Release.Name }}-app` → key `password` |
+| `DB_USER` | Secret `{{ .Release.Name }}-pg-cluster-app` → key `username` |
+| `DB_PASSWORD` | Secret `{{ .Release.Name }}-pg-cluster-app` → key `password` |
 
 **Redis**
 
@@ -143,7 +144,7 @@ spec:
   chart:
     repo: full-stack-app
     url: https://marketplace.krateo.io
-    version: 0.0.19
+    version: 0.0.20
 EOF
 ```
 
@@ -160,7 +161,7 @@ kubectl wait compositiondefinition/full-stack-app \
 
 ```sh
 cat <<EOF | kubectl apply -f -
-apiVersion: composition.krateo.io/v0-0-19
+apiVersion: composition.krateo.io/v0-0-20
 kind: FullStackApp
 metadata:
   name: fsa-1
