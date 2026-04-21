@@ -7,9 +7,9 @@ A Krateo blueprint that provisions a complete full-stack application environment
 - **Backend** — any containerised HTTP service; connects to the database and optionally to Redis
 - **Frontend** — any containerised web server; proxies API requests to the backend
 
-## Operator pattern
+## Operator pattern (in a nutshell)
 
-Kubernetes operators extend the cluster's API with custom resources and embed domain-specific operational knowledge in a controller. Instead of running imperative scripts to set up a database cluster or a cache, you declare the desired state in a custom resource (e.g. a `Cluster` for CNPG or a `Redis` for OT-CONTAINER-KIT) and the operator's controller loop continuously reconciles the actual cluster state towards it: creating Pods, Services, Secrets, and ConfigMaps as needed, and reacting to failures automatically.
+Kubernetes operators extend the cluster's API with custom resources and embed domain-specific operational knowledge in a controller. Instead of running imperative scripts to set up a database cluster or a cache, you **declare the desired state** in a custom resource (e.g. a `Cluster` for CNPG or a `Redis` for OT-CONTAINER-KIT) and the **operator's controller loop continuously reconciles the actual cluster state towards it**: creating Pods, Services, Secrets, and ConfigMaps as needed, and reacting to failures automatically.
 
 In this blueprint, two operators are responsible for the stateful infrastructure:
 
@@ -17,6 +17,19 @@ In this blueprint, two operators are responsible for the stateful infrastructure
 - **OT-CONTAINER-KIT Redis Operator** watches `Redis` resources and provisions the Redis instance with its backing storage.
 
 The blueprint only needs to declare *what* is wanted; the operators handle *how* to get there.
+
+```mermaid
+flowchart LR
+    CR["Custom Resource\n(Cluster / Redis)"]
+    OP["Operator\ncontroller loop"]
+    K8S["Kubernetes resources\n(Pods, Services, Secrets…)"]
+
+    CR -- "declare desired state" --> OP
+    OP -- "reconcile" --> K8S
+    K8S -- "observe actual state" --> OP
+```
+
+> **Note** — In this blueprint the reconciled resources are Kubernetes-native objects (Pods, Services, Secrets). This is the common case, but the pattern is not limited to it: an operator can manage anything its controller can reach — cloud provider APIs, external databases, DNS records, SaaS services, and so on. The custom resource always lives on the cluster and represents the desired state: only what the controller reconciles against on the other end changes.
 
 ---
 
@@ -130,7 +143,7 @@ spec:
   chart:
     repo: full-stack-app
     url: https://marketplace.krateo.io
-    version: 0.0.18
+    version: 0.0.19
 EOF
 ```
 
@@ -147,7 +160,7 @@ kubectl wait compositiondefinition/full-stack-app \
 
 ```sh
 cat <<EOF | kubectl apply -f -
-apiVersion: composition.krateo.io/v0-0-18
+apiVersion: composition.krateo.io/v0-0-19
 kind: FullStackApp
 metadata:
   name: fsa-1
