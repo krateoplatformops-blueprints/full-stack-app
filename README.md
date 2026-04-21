@@ -7,6 +7,17 @@ A Krateo blueprint that provisions a complete full-stack application environment
 - **Backend** — any containerised HTTP service; connects to the database and optionally to Redis
 - **Frontend** — any containerised web server; proxies API requests to the backend
 
+## Operator pattern
+
+Kubernetes operators extend the cluster's API with custom resources and embed domain-specific operational knowledge in a controller. Instead of running imperative scripts to set up a database cluster or a cache, you declare the desired state in a custom resource (e.g. a `Cluster` for CNPG or a `Redis` for OT-CONTAINER-KIT) and the operator's controller loop continuously reconciles the actual cluster state towards it: creating Pods, Services, Secrets, and ConfigMaps as needed, and reacting to failures automatically.
+
+In this blueprint, two operators are responsible for the stateful infrastructure:
+
+- **CNPG** watches `Cluster` resources and provisions a high-availability PostgreSQL cluster, handles primary election, streaming replication, and secret rotation entirely on its own.
+- **OT-CONTAINER-KIT Redis Operator** watches `Redis` resources and provisions the Redis instance with its backing storage.
+
+The blueprint only needs to declare *what* is wanted; the operators handle *how* to get there.
+
 ---
 
 ## Prerequisites
@@ -56,15 +67,15 @@ flowchart TD
 
 **PostgreSQL (CNPG)**
 
-CNPG bootstraps the cluster with a dedicated database and owner matching `metadata.name` (the Helm release name), then **automatically generates** a Kubernetes Secret named `<clusterName>-app`. Credentials are injected in the backend as environment variables from that secret:
+The Helm chart renders the `Cluster` manifest with `metadata.name`, `bootstrap.initdb.database`, and `bootstrap.initdb.owner` all set to `{{ .Release.Name }}` (the Helm release name). CNPG then **automatically generates** a Kubernetes Secret named `{{ .Release.Name }}-app` containing the credentials for that database owner. Those credentials are injected into the backend as environment variables:
 
 | Env var | Source |
 |---|---|
-| `DB_HOST` | ConfigMap → `<clusterName>-rw.<namespace>.svc.cluster.local` |
+| `DB_HOST` | ConfigMap → `{{ .Release.Name }}-rw.{{ .Release.Namespace }}.svc.cluster.local` |
 | `DB_PORT` | ConfigMap → `5432` |
 | `DB_NAME` | ConfigMap → Helm release name |
-| `DB_USER` | Secret `<clusterName>-app` → key `username` |
-| `DB_PASSWORD` | Secret `<clusterName>-app` → key `password` |
+| `DB_USER` | Secret `{{ .Release.Name }}-app` → key `username` |
+| `DB_PASSWORD` | Secret `{{ .Release.Name }}-app` → key `password` |
 
 **Redis**
 
@@ -73,7 +84,7 @@ Redis is deployed via the OT-CONTAINER-KIT operator **without any password or TL
 | Env var | Value |
 |---|---|
 | `REDIS_ENABLED` | `"true"` / `"false"` (default `"false"`) |
-| `REDIS_HOST` | `<release>-redis.<namespace>.svc.cluster.local` |
+| `REDIS_HOST` | `{{ .Release.Name }}-redis.{{ .Release.Namespace }}.svc.cluster.local` |
 | `REDIS_PORT` | `6379` |
 
 ---
