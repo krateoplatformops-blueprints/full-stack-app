@@ -144,12 +144,6 @@ app:
   # @schema
   cnpg:
     # @schema
-    # description: CNPG Cluster resource name; CNPG derives the read-write service as <clusterName>-rw and the app secret as <clusterName>-app
-    # type: string
-    # default: pg-cluster
-    # @schema
-    clusterName: pg-cluster
-    # @schema
     # description: PostgreSQL major version — selects the official ghcr.io/cloudnative-pg/postgresql image tag
     # type: string
     # enum: ["16", "17", "18"]

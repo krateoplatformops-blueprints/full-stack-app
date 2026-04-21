@@ -83,12 +83,6 @@
           "additionalProperties": false,
           "description": "CloudNativePG cluster configuration",
           "properties": {
-            "clusterName": {
-              "default": "pg-cluster",
-              "description": "CNPG Cluster resource name; CNPG derives the read-write service as \u003cclusterName\u003e-rw and the app secret as \u003cclusterName\u003e-app",
-              "title": "clusterName",
-              "type": "string"
-            },
             "instances": {
               "default": 3,
               "description": "Number of PostgreSQL instances in the CNPG cluster",
