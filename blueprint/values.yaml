@@ -171,6 +171,18 @@ app:
       size: 1Gi
 
 # @schema
+# description: Portal configuration (Keep disabled, it is the final result we want to obtain at the end of OSDAY workshop)
+# type: object
+# @schema
+portal:
+  # @schema
+  # description: Enable the full-stack-app-portal companion chart (portal pages for this composition) (Keep disabled, it is the final result we want to obtain at the end of OSDAY workshop)
+  # type: boolean
+  # default: false
+  # @schema
+  enabled: false # Keep disabled, it is the final result we want to obtain at the end of OSDAY workshop
+
+# @schema
 # description: Testing configuration
 # type: object
 # @schema

@@ -37,3 +37,7 @@ dependencies:
 - name: portal-composition-page-generic
   version: "1.4.3"
   repository: "https://marketplace.krateo.io"
+- name: full-stack-app-portal
+  version: "1.0.1"
+  repository: "https://marketplace.krateo.io"
+  condition: portal.enabled

@@ -14,6 +14,9 @@ spec:
       ttlSecondsAfterFinished: 300
       template:
         spec:
+          metadata:
+            labels:
+              app: {{ .Release.Name }}-load-test-backend
           restartPolicy: Never
           containers:
             - name: load-test-backend

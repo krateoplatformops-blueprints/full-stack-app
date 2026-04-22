@@ -227,6 +227,20 @@
       "title": "app",
       "type": "object"
     },
+    "portal": {
+      "additionalProperties": false,
+      "description": "Portal configuration (Keep disabled, it is the final result we want to obtain at the end of OSDAY workshop)",
+      "properties": {
+        "enabled": {
+          "default": false,
+          "description": "Enable the full-stack-app-portal companion chart (portal pages for this composition) (Keep disabled, it is the final result we want to obtain at the end of OSDAY workshop)",
+          "title": "enabled",
+          "type": "boolean"
+        }
+      },
+      "title": "portal",
+      "type": "object"
+    },
     "testing": {
       "additionalProperties": false,
       "description": "Testing configuration",
