@@ -38,6 +38,6 @@ dependencies:
   version: "1.4.3"
   repository: "https://marketplace.krateo.io"
 - name: full-stack-app-portal
-  version: "1.0.5"
+  version: "1.0.6"
   repository: "https://marketplace.krateo.io"
   condition: portal.enabled
