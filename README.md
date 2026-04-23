@@ -33,24 +33,6 @@ flowchart LR
 
 ---
 
-## Prerequisites
-
-- **CNPG Operator** is already deployed with a standard Krateo installation.
-
-- **Redis Operator (OT-CONTAINER-KIT)**:
-```bash
-helm repo add ot-helm https://ot-container-kit.github.io/helm-charts
-helm upgrade --install redis-operator ot-helm/redis-operator \
-  --namespace ot-operators --create-namespace
-
-kubectl wait deployment/redis-operator \
-  --namespace ot-operators \
-  --for=condition=Available \
-  --timeout=120s
-```
-
----
-
 ## Architecture
 
 ```mermaid
@@ -128,6 +110,22 @@ Redis is deployed via the OT-CONTAINER-KIT operator **without any password or TL
 Full schema: [`blueprint/values.schema.json`](blueprint/values.schema.json)
 
 ---
+
+## Prerequisites
+
+- **CNPG Operator** is already deployed with a standard Krateo installation.
+
+- **Redis Operator (OT-CONTAINER-KIT)**:
+```bash
+helm repo add ot-helm https://ot-container-kit.github.io/helm-charts
+helm upgrade --install redis-operator ot-helm/redis-operator \
+  --namespace ot-operators --create-namespace
+
+kubectl wait deployment/redis-operator \
+  --namespace ot-operators \
+  --for=condition=Available \
+  --timeout=120s
+```
 
 ## Install using Krateo Composable Operation
 
