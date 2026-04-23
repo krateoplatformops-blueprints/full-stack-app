@@ -2,10 +2,27 @@
 
 ## Prerequisites
 
-- docker
-- kubectl
-- helm v3
-- kind (for local cluster setup)
+- Docker: https://docs.docker.com/engine/install/
+
+- kubectl: https://kubernetes.io/docs/tasks/tools/#kubectl
+
+- Helm (v3): https://helm.sh/docs/v3/intro/install
+
+- kind: https://kind.sigs.k8s.io/docs/user/quick-start/#installation
+
+To verify that kind is working properly:
+```sh
+# Create test cluster
+kind create cluster --name test
+
+# Check cluster is running and kubectl context is set
+kind get clusters
+kubectl cluster-info --context kind-test
+kubectl get all -A
+
+# Delete cluster 
+kind delete
+```
 
 ## Add the Krateo Helm repository
 
