@@ -21,7 +21,7 @@ kubectl cluster-info --context kind-test
 kubectl get all -A
 
 # Delete cluster 
-kind delete
+kind delete cluster --name test
 ```
 
 ## Add the Krateo Helm repository
