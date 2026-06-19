@@ -35,7 +35,7 @@ annotations:
 
 dependencies:
 - name: bs-pcpg
-  version: "1.0.0"
+  version: "1.0.1"
   repository: "oci://ghcr.io/edmonddantes21/bs-pcpg"
 - name: full-stack-app-portal
   version: "1.0.9"
